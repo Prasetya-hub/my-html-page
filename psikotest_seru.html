@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cerita Kita, Jawaban Kamu</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #ffe0ec, #fff);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      color: #d63384;
+    }
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .option {
+      background: #ffe6f0;
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.2s;
+    }
+    .option:hover {
+      background: #ffd3e6;
+    }
+    .option.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+    .option.wrong {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+    }
+    .next-btn {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #ff8fb1;
+      color: white;
+      cursor: pointer;
+      display: none;
+    }
+    .next-btn:hover {
+      background-color: #ff7099;
+    }
+    .result {
+      font-size: 1.3rem;
+      color: #d63384;
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cerita Kita, Jawaban Kamu</h1>
+    <div id="quiz">
+      <div class="question" id="question">Memuat...</div>
+      <div class="options" id="options"></div>
+      <button class="next-btn" id="nextBtn">Pertanyaan Selanjutnya</button>
+    </div>
+    <div class="result" id="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const questions = [
+        { q: "Siapa yang duluan nyimpen rasa?", options: ["Zakpres", "Ajet"], answer: "Ajet" },
+        { q: "Siapa yang duluan ngungkapin perasaan?", options: ["Zakpres", "Ajet"], answer: "Ajet" },
+        { q: "Siapa yang paling semangat tiap ketemu?", options: ["Zakpres", "Ajet"], answer: "Zakpres" },
+        { q: "Siapa yang paling gampang manyun?", options: ["Zakpres", "Ajet"], answer: "Ajet" },
+        { q: "Siapa yang paling sering bilang 'kangen'?", options: ["Zakpres", "Ajet"], answer: "Zakpres" },
+        { q: "Siapa yang lebih manja diam-diam?", options: ["Zakpres", "Ajet"], answer: "Ajet" }
+      ];
+
+      let current = 0;
+      let score = 0;
+
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      const nextBtn = document.getElementById("nextBtn");
+      const resultEl = document.getElementById("result");
+
+      function showQuestion() {
+        nextBtn.style.display = "none";
+        const q = questions[current];
+        questionEl.textContent = q.q;
+        optionsEl.innerHTML = "";
+
+        q.options.forEach(opt => {
+          const btn = document.createElement("div");
+          btn.classList.add("option");
+          btn.textContent = opt;
+          btn.onclick = () => selectOption(btn, q.answer);
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      function selectOption(selected, correct) {
+        const allOptions = document.querySelectorAll(".option");
+        allOptions.forEach(opt => {
+          opt.onclick = null;
+          if (opt.textContent === correct) {
+            opt.classList.add("correct");
+          }
+          if (opt === selected && opt.textContent !== correct) {
+            opt.classList.add("wrong");
+          }
+        });
+
+        if (selected.textContent === correct) {
+          score++;
+        }
+
+        nextBtn.style.display = "inline-block";
+      }
+
+      function nextQuestion() {
+        current++;
+        if (current < questions.length) {
+          showQuestion();
+        } else {
+          showResult();
+        }
+      }
+
+      function showResult() {
+        document.getElementById("quiz").style.display = "none";
+        resultEl.style.display = "block";
+        resultEl.innerHTML = `
+          Kamu berhasil jawab <b>${score}</b> dari <b>${questions.length}</b> dengan benar!<br><br>
+          <i>Apapun hasilnya, makasih banyak yaa, karena kamu udah jadi bagian terbaik dari cerita ini.</i>
+        `;
+      }
+
+      nextBtn.addEventListener("click", nextQuestion);
+      showQuestion();
+    });
+  </script>
+</body>
+</html>
